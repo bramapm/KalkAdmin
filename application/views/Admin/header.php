@@ -4,10 +4,9 @@
 		<ul class="user-info pull-left pull-none-xsm">		
 			<!-- Profile Info -->
 			<li class="profile-info dropdown"><!-- add class "pull-right" if you want to place this from right -->		
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-					<img src="assets/images/thumb-1@2x.png" alt="" class="img-circle" width="44" />
-					Welcome Admin
-				</a>		
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">					
+					<p>Welcome, Admin</p>
+				</a>
 			</li>		
 		</ul>
 	</div>				
@@ -22,7 +21,7 @@
 			
 			<li class="sep"></li>
 			<li>
-				<a href="extra-login.html">
+				<a href="<?php echo base_url();?>index.php/Login/prosesLogout">
 					Log Out <i class="entypo-logout right"></i>
 				</a>
 			</li>

@@ -8,7 +8,7 @@
 				<!-- logo -->
 				<div class="logo">
 					<a href="index.html">
-						<img src="assets/images/logo@2x.png" width="120" alt="" />
+						<!-- <img src="assets/images/logo@2x.png" width="120" alt="" /> -->
 					</a>
 				</div>
 
@@ -43,7 +43,7 @@
 				<li class="">
 					<a href="<?php echo base_url();?>index.php/Admin/Kalori">
 						<i class="entypo-layout"></i>
-						<span class="title">Data Kalori</span>
+						<span class="title">Data Makanan</span>
 					</a>					
 				</li>
 

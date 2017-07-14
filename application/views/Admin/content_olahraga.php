@@ -27,14 +27,14 @@
 					<div class="form-group">							
 						<label class="col-sm-3">Nama</label>						
 						<div class="col-sm-8">
-							<input type="text" class="form-control" id="nama_olahraga" name="nama_olahraga" placeholder="Nama" required> 
+							<input type="text" class="form-control" id="nama_olahraga" name="nama_olahraga" placeholder="Nama" required autofocus> 
 						</div>
 					</div>
 
 					<div class="form-group">
-						<label class="col-sm-3">Kalori / jam</label>						
+						<label class="col-sm-3">Kalori / menit</label>						
 						<div class="col-sm-8">							
-							<input type="text" class="form-control" data-mask="decimal" data-numeric="true" data-numeric-align="right" placeholder="Kalori / jam" name="kkal" id="kkal" required/>
+							<input type="text" class="form-control" onkeypress="return event.charCode >= 46 && event.charCode <= 57 && event.charCode != 47" placeholder="Kalori / menit" name="kkal" id="kkal" required/>
 						</div>
 					</div>
 
@@ -128,7 +128,6 @@
 			</tr>
 		</tfoot>
 	</table>
-
 	<br />
 </div>
 </div>
@@ -142,19 +141,19 @@
 			</div>
 			<!-- modal body -->
 			<div class="modal-body">
-				<form enctype="multipart/form-data" class="form-horizontal form-groups-bordered" method="POST">
+				<form enctype="multipart/form-data" class="form-horizontal form-groups-bordered" method="POST" id="formUpdate">
 					<div class="form-group">
-						<input class="id_olahraga" type="hidden" name="id_olahraga">
+						<input class="id_olahraga" type="hidden" name="id_olahraga" id="id_olahraga">
 						<label class="col-sm-3" for="nama">Nama</label>
 						<div class="col-sm-8">	
-							<input class="form-control nama_olahraga " type="text" name="nama_olahraga">
+							<input class="form-control nama_olahraga" type="text" name="nama_olahraga" id="nama_olahraga">
 						</div>
 					</div>
 
 					<div class="form-group">
-						<label class="col-sm-3">Kalori / jam</label>						
+						<label class="col-sm-3">Kalori / menit</label>						
 						<div class="col-sm-8">							
-							<input class="form-control kkal" type="text" class="form-control" data-mask="decimal" data-numeric="true" data-numeric-align="right" placeholder="Kalori / jam" name="kkal" required/>
+							<input class="form-control kkal" type="text" class="form-control" data-mask="decimal" data-numeric="true" data-numeric-align="right" placeholder="Kalori / menit" name="kkal" id="kkal" required/>
 						</div>
 					</div>
 
@@ -181,7 +180,7 @@
 					</div>
 
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="">Close</button>
 					</div>
 				</form>
 			</div>
@@ -206,7 +205,7 @@
            </div>
            <div class="modal-footer">
                <form method="post">
-                   <input class="id_olahraga" type="text" name="id_olahraga">
+                   <!-- <input class="id_olahraga" type="text" name="id_olahraga"> -->
                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                    <button type="button" class="btn btn-danger delete">Delete</button>
                </form>
@@ -228,9 +227,10 @@
 <script type="text/javascript">
 	var table = $("table#tableOlg");
 	var dt_table = table.DataTable();
-	var modalTambah = $("#modalTambah");
-	var formTambah = modalTambah.find("form");
 	var modalEdit = $("#modalUpdate");
+	var modalTambah = $("#modalTambah");
+	var modalDelete = $("#modalDelete");
+	var formTambah = modalTambah.find("form");
 	var formUpdate = modalEdit.find("form");
 
 	function run_table() {
@@ -239,10 +239,15 @@
 			// console.log(data);
 			var data_arr = [];
 			result.data.forEach(function (row, i) {
-				var val = Object.values(row);
-				//val[val.length] = "<a href='#' data_id='"+row.id_olahraga+"'>Edit</a>";
-
-				val[val.length] = "<button type='button' style='margin-bottom: 5px;' class='btn btn-success tombol' data-toggle='modal' data-target='#modalUpdate' data-id_olahraga='"+row.id_olahraga+"' data-nama_olahraga='"+row.nama_olahraga+"' data-kkal='"+row.kkal+"' data-keterangan='"+row.keterangan+"' data-foto='"+row.foto+"'><span class='glyphicon glyphicon-pencil'></span></button>"+
+				console.log(row);
+				row.foto = "<img src='"+row.foto+"' width='100%'>";
+				var val = [];
+				val [0] = i+1;
+				val [1] = row.nama_olahraga;
+				val [2] = row.kkal;
+				val [3] = row.keterangan;
+				val [4] = row.foto;
+				val [5] = "<button type='button' style='margin-bottom: 5px;' class='btn btn-success tombol' data-toggle='modal' data-target='#modalUpdate' data-id_olahraga='"+row.id_olahraga+"' data-nama_olahraga='"+row.nama_olahraga+"' data-kkal='"+row.kkal+"' data-keterangan='"+row.keterangan+"' ><span class='glyphicon glyphicon-pencil'></span></button>"+
 				"&nbsp<button type='button' style='margin-bottom: 5px;' class='btn btn-success tombol delete' data-toggle='modal' data-target='#modalDelete' data-id_olahraga='"+row.id_olahraga+"' data-nama_olahraga='"+row.nama_olahraga+"'><span class='glyphicon glyphicon-trash'></span></button>"
 				data_arr[i] = val;
 			});
@@ -251,6 +256,7 @@
 		});
 	}
 	run_table();
+	var dataUpdate = {};
 
 	$(document).on("click", '.tombol', function(e){
 		var id_olahraga = $(this).data('id_olahraga');
@@ -265,18 +271,11 @@
 		$(".keterangan").val(keterangan);
 		$(".foto").val(foto);
 
+		dataUpdate.nama_olahraga =  nama_olahraga;
 		$(".text-delete").text("Apakah anda yakin akan menghapus data dengan nama " + nama_olahraga + "?");
 	});
-
 	
 	$('button.tambah').on("click", function(e){
-		//var data = formTambah.serialize();
-		//data += "&method=insert&foto=";
-
-		// run_ajax(base_url+"Olahraga", data, function (result) {
-		// 	console.log(result);
-		// });
-
 		var newForm = new FormData();
 		newForm.append("method", "insert");
 		newForm.append("id_olahraga", $('#formTambah').find("input#id_olahraga").val());
@@ -291,36 +290,80 @@
 		$.ajax({
 			url:base_url+"Olahraga",
 	        type: "POST",
-	        data: newForm,
+	        data: newForm,			//inisialisasi data dari FormData(newForm)
 			processData: false,
 			contentType: false,
 	        dataType: "JSON",
-	        success: function(data)
+	        success: function(result)
 	        {
-	        console.log(data);
+	        console.log(result);
+	        if (result.code == 200) {
+	        	modalTambah.modal('hide');
+				location.reload();
+				run_table();
+	        	} else {
+	        		alert(result.message);
+	        	}
 	        }
-	        
 		});
-		modalTambah.modal('hide');
-		run_table();
-	});	
+		return false;
+	});
 
 	$('button.edit').on("click", function(e){
-		var data = formUpdate.serialize();
-		data += "&method=update&foto=";
-		console.log(data);
-		run_ajax(base_url+"Olahraga", data, function (result) {
-			console.log(result);
+		var newForm = new FormData();
+		if (dataUpdate.nama_olahraga != $('#formUpdate').find("input#nama_olahraga").val()) {
+			newForm.append("nama_olahraga", $('#formUpdate').find("input#nama_olahraga").val());	
+		}
+		newForm.append("method", "update");
+		newForm.append("id_olahraga", $('#formUpdate').find("input#id_olahraga").val());
+		//newForm.append("nama_olahraga", $('#formUpdate').find("input#nama_olahraga").val());
+		newForm.append("kkal", $('#formUpdate').find("input#kkal").val());
+		newForm.append("keterangan", $('#formUpdate').find("input#keterangan").val());
+		$.each($("input#foto"), function(i, obj) {
+	        $.each(obj.files,function(j, file){
+	            newForm.append('foto', file);
+	        });
 		});
-		modalEdit.modal('hide');
-		run_table();
+		$.ajax({
+			url:base_url+"Olahraga",
+	        type: "POST",
+	        data: newForm,			//inisialisasi data dari FormData(newForm)
+			processData: false,
+			contentType: false,
+	        dataType: "JSON",
+	        success: function(result){
+	        console.log(result);
+	        if (result.code == 200) {
+	        	modalEdit.modal('hide');
+				// location.reload();
+				run_table();
+	        	} else {
+	        		alert(result.message);
+	        	}
+	        }
+		});
+		return false;
 	});
+
+	// $('button.edit').on("click", function(e){
+	// 	var data = formUpdate.serialize();
+	// 	data += "&method=update&foto=";
+	// 	console.log(data);
+	// 	run_ajax(base_url+"Olahraga", data, function (result) {
+	// 		console.log(result);
+	// 	});
+	// 	modalEdit.modal('hide');
+	// 	dt_table.clear();
+	// 	location.reload();
+	// 	run_table();
+	// });
 
 	$('button.delete').on("click", function(e){
 		run_ajax(base_url+"Olahraga", {method:"delete", id_olahraga:$(".id_olahraga").val()}, function (result) {
 			console.log(result);
 		});
 		modalDelete.modal('hide');
+		//location.reload();
 		run_table();
 	});	
 </script>
